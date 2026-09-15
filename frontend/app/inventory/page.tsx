@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import AppLayout from "../../components/AppLayout";
 import { ToastContainer, useToast } from "../../components/Toast";
 
-const API = "http://localhost:5000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const CATEGORIES = ["General","Electronics","Apparel","Food","Tools","Raw Materials","Packaging"];
 
 interface Product {

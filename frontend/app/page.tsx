@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import AppLayout from "../components/AppLayout";
 import { ToastContainer, useToast } from "../components/Toast";
 
-const API = "http://localhost:5000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface Stats { total: number; outOfStock: number; lowStock: number; totalValue: number; }
 interface Product { _id: string; name: string; quantity: number; price: number; status: string; category: string; }
