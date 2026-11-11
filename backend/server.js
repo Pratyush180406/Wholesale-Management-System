@@ -4,15 +4,14 @@ const cors = require("cors");
 
 const app = express();
 
+require("dotenv").config()
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose
-  .connect("mongodb://127.0.0.1:27017/wms")
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.log("❌ MongoDB Error:", err));
+// 3. Validate environment variables
+const MONGODB_URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT || 5000;
 
 // Schemas
 const ProductSchema = new mongoose.Schema(
@@ -40,6 +39,11 @@ ProductSchema.pre("save", function (next) {
 });
 
 const Product = mongoose.model("Product", ProductSchema);
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("WMS API is running...");
+});
 
 // ─── Routes ───────────────────────────────────────────
 
@@ -108,4 +112,25 @@ app.get("/stats", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("🚀 Server running on http://localhost:5000"));
+// 4. Connect to MongoDB before starting Express
+async function startServer() {
+  try {
+    if (!MONGODB_URI) {
+      throw new Error("MONGODB_URI is missing. Check your .env file.");
+    }
+
+    await mongoose.connect(MONGODB_URI);
+
+    console.log("✅ MongoDB Atlas Connected");
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Server startup failed:", err.message);
+    process.exit(1);
+  }
+}
+
+// Start application
+startServer();
